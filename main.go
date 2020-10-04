@@ -62,14 +62,27 @@ func main() {
 				http.Error(w, err.Error(), 500)
 				return
 			}
+			name := ""
+			for _, c := range configs {
+				if c.Sensor == sensor {
+					name = c.Name
+				}
+			}
+			if len(name) == 0 {
+				name = sensor
+			}
 			pm := RawEPAConverter(rawPM)
 			err = tmpl.Execute(w, struct {
+				HasName      bool
+				Name         string
 				Temp         int
 				AQI          int
 				AQIColor     string
 				AQITextColor string
 				Configs      []Config
 			}{
+				HasName:      len(name) > 0,
+				Name:         name,
 				Temp:         temp,
 				AQI:          pm,
 				AQIColor:     AQIColor(pm),

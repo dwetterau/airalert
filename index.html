@@ -1,9 +1,18 @@
 <html>
+<title>AirAlert</title>
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
 <head>
 <style>
     * {
         color: {{.AQITextColor}};
         background-color: {{.AQIColor}};
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
     }
 
     .centered {
@@ -13,17 +22,23 @@
 </style>
 </head>
 <body>
+<div class="content">
 <h1 class="centered">AirAlert</h1>
 <div class="centered">
-    <h2>{{.Temp}}°F</h2>
-    <h2>AQI {{.AQI}}</h2>
+    {{if .HasName}}
+        <h2>{{.Name}}</h2>
+        <h2>{{.Temp}}°F</h2>
+        <h2>AQI {{.AQI}}</h2>
+    {{end}}
 </div>
 <div>
+    <h3>Sensors</h3>
     {{range .Configs}}
         <div>
             <a href="/{{.Sensor}}">{{.Name}}</a>
         </div>
     {{end}}
+</div>
 </div>
 </body>
 </html>
