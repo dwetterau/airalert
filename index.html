@@ -1,9 +1,22 @@
 <html>
+<head>
+<style>
+    * {
+        color: {{.AQITextColor}};
+        background-color: {{.AQIColor}};
+    }
+
+    .centered {
+        text-align: center;
+        width: 100%;
+    }
+</style>
+</head>
 <body>
-<h1>AirAlert</h1>
-<div>
-    <div>Temp {{.Temp}}</div>
-    <div>AQI {{.AQI}}</div>
+<h1 class="centered">AirAlert</h1>
+<div class="centered">
+    <h2>{{.Temp}}°F</h2>
+    <h2>AQI {{.AQI}}</h2>
 </div>
 <div>
     {{range .Configs}}

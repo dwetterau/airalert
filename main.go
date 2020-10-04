@@ -64,13 +64,17 @@ func main() {
 			}
 			pm := RawEPAConverter(rawPM)
 			err = tmpl.Execute(w, struct {
-				Temp    int
-				AQI     int
-				Configs []Config
+				Temp         int
+				AQI          int
+				AQIColor     string
+				AQITextColor string
+				Configs      []Config
 			}{
-				Temp:    temp,
-				AQI:     pm,
-				Configs: configs,
+				Temp:         temp,
+				AQI:          pm,
+				AQIColor:     AQIColor(pm),
+				AQITextColor: AQITextColor(pm),
+				Configs:      configs,
 			})
 			if err != nil {
 				fmt.Println("error executing template", err.Error())
@@ -253,6 +257,29 @@ func RawEPAConverter(x float64) int {
 		y = 0.796*(x-250.5) + 301
 	}
 	return int(math.Round(y))
+}
+
+func AQIColor(aqi int) string {
+	if aqi <= 50 {
+		return "rgb(0, 255, 0)"
+	}
+	if aqi <= 100 {
+		return "yellow"
+	}
+	if aqi <= 150 {
+		return "orange"
+	}
+	if aqi <= 200 {
+		return "rgb(255, 0, 0)"
+	}
+	return "purple"
+}
+
+func AQITextColor(aqi int) string {
+	if aqi <= 100 {
+		return "black"
+	}
+	return "white"
 }
 
 type AQIResponse struct {
