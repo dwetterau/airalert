@@ -273,19 +273,62 @@ func RawEPAConverter(x float64) int {
 }
 
 func AQIColor(aqi int) string {
+	colors := [][]int{
+		{60, 179, 113},
+		{255, 255, 102},
+		{255, 140, 0},
+		{255, 40, 0},
+		{128, 0, 128},
+	}
+	i := 0
+	j := 0
+	percent := 0.0
 	if aqi <= 50 {
-		return "#00FF00"
+		i = 0
+		j = 0
+	} else if aqi <= 75 {
+		i = 0
+		j = 1
+		percent = (float64(aqi) - 50.0) / 25.0
+	} else if aqi <= 125 {
+		i = 1
+		j = 2
+		percent = (float64(aqi) - 75.0) / (125.0 - 75.0)
+	} else if aqi <= 175 {
+		i = 2
+		j = 3
+		percent = (float64(aqi) - 125.0) / (175.0 - 125.0)
+	} else if aqi <= 250 {
+		i = 3
+		j = 4
+		percent = (float64(aqi) - 175.0) / (250.0 - 175.0)
+	} else {
+		i = 4
+		j = 4
 	}
-	if aqi <= 100 {
-		return "yellow"
+	if i == j {
+		return fmt.Sprintf("#%s%s%s", hex(colors[i][0]), hex(colors[i][1]), hex(colors[i][2]))
 	}
-	if aqi <= 150 {
-		return "orange"
+	return fmt.Sprintf(
+		"#%s%s%s",
+		hex(inter(colors[i][0], colors[j][0], percent)),
+		hex(inter(colors[i][1], colors[j][1], percent)),
+		hex(inter(colors[i][2], colors[j][2], percent)),
+	)
+}
+
+func hex(v int) string {
+	if v < 0 {
+		v = 0
 	}
-	if aqi <= 200 {
-		return "#FF0000"
+	if v > 255 {
+		v = 255
 	}
-	return "purple"
+	return fmt.Sprintf("%02x", v)
+}
+
+func inter(a, b int, p float64) int {
+	return int(math.Round(float64(a)*(1-p) + float64(b)*p))
 }
 
 func AQITextColor(aqi int) string {
