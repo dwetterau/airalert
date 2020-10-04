@@ -1,0 +1,16 @@
+<html>
+<body>
+<h1>AirAlert</h1>
+<div>
+    <div>Temp {{.Temp}}</div>
+    <div>AQI {{.AQI}}</div>
+</div>
+<div>
+    {{range .Configs}}
+        <div>
+            <a href="/{{.Sensor}}">{{.Name}}</a>
+        </div>
+    {{end}}
+</div>
+</body>
+</html>
