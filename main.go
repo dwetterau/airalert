@@ -274,7 +274,7 @@ func RawEPAConverter(x float64) int {
 
 func AQIColor(aqi int) string {
 	if aqi <= 50 {
-		return "rgb(0, 255, 0)"
+		return "#00FF00"
 	}
 	if aqi <= 100 {
 		return "yellow"
@@ -283,7 +283,7 @@ func AQIColor(aqi int) string {
 		return "orange"
 	}
 	if aqi <= 200 {
-		return "rgb(255, 0, 0)"
+		return "#FF0000"
 	}
 	return "purple"
 }
