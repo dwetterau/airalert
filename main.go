@@ -213,7 +213,9 @@ func GetAQI(sensor string) (int, float64, error) {
 	if err != nil {
 		return 0, 0, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	rawData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return 0, 0, err
@@ -236,14 +238,15 @@ func GetAQI(sensor string) (int, float64, error) {
 				numTemp++
 			}
 		}
-		if len(s.PM2_5Value) > 0 {
-			rawPM, err := strconv.ParseFloat(s.PM2_5Value, 64)
-			if err != nil {
-				fmt.Println("warning, could not parse pm:", s.PM2_5Value, err.Error())
-			} else {
-				pm += rawPM
-				numPM++
+		if len(s.Stats) > 0 {
+			var stats StatsResponse
+			if err := json.Unmarshal([]byte(s.Stats), &stats); err != nil {
+				fmt.Println("warning, could not parse pm:", s.Stats, err.Error())
+				continue
 			}
+			v := stats.Avg10m
+			pm += v
+			numPM++
 		}
 	}
 	if numTemp > 0 {
@@ -345,6 +348,12 @@ type AQIResponse struct {
 type SensorResponse struct {
 	PM2_5Value string
 	TempF      string `json:"temp_f"`
+	Stats      string
+}
+
+type StatsResponse struct {
+	Current float64 `json:"v"`
+	Avg10m  float64 `json:"v1"`
 }
 
 func SendText(number, message string) error {
